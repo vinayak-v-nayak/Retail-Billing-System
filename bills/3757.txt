@@ -1,0 +1,21 @@
+		**Welcome Customer**
+
+Bill Number:3757
+
+Customer Name:Vinayak
+
+Phone Number:7777
+=======================================================
+Product			Quantity			Price
+=======================================================
+Face Wash			07			140 Rs
+Salt			07			350 Rs
+Pepsi			07			350 Rs
+Dew			04			200 Rs
+-------------------------------------------------------
+Cosmetic Tax:				16.80 Rs Rs
+Grocery Tax:				42.00 Rs Rs
+Cold Drinks Tax:				66.00 Rs Rs
+
+Total Bill:				1164.8 Rs
+-------------------------------------------------------

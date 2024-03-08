@@ -1,0 +1,25 @@
+		**Welcome Customer**
+
+Bill Number:4367
+
+Customer Name:Vinay
+
+Phone Number:33
+=======================================================
+Product			Quantity			Price
+=======================================================
+Face Cream			02			300.0
+Hair Spray			02			400.0
+Hair Gel			02			320.0
+Sugar			02			140.0
+Oil			02			400.0
+Pepsi			02			100.0
+Dew			02			100.0
+Frooti			02			140.0
+-------------------------------------------------------
+Cosmetic Tax:				122.40 Rs
+Grocery Tax:				64.80 Rs
+Cold Drinks Tax:				40.80 Rs
+
+Total Bill:				2128.00 Rs
+-------------------------------------------------------

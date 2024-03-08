@@ -1,0 +1,24 @@
+		**Welcome Customer**
+
+Bill Number:5011
+
+Customer Name:Vinayaka
+
+Phone Number:333
+=======================================================
+Product			Quantity			Price
+=======================================================
+Face Cream			03			450.0 Rs
+Face Wash			03			450.0 Rs
+Hair Gel			03			480.0 Rs
+Sugar			03			210.0 Rs
+Oil			03			600.0 Rs
+Pepsi			03			150.0 Rs
+Frooti			03			210.0 Rs
+-------------------------------------------------------
+Cosmetic Tax:				165.60 Rs Rs
+Grocery Tax:				97.20 Rs Rs
+Cold Drinks Tax:				43.20 Rs Rs
+
+Total Bill:				2855.9999999999995 Rs
+-------------------------------------------------------
