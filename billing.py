@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random,os,tempfile,smtplib
 import mysql.connector
+import subprocess
 def get_db():
     config = {
         "host":"localhost",
@@ -15,11 +16,10 @@ mydb=get_db()
 mycursor = mydb.cursor()
 mycursor.execute('''
 CREATE TABLE IF NOT EXISTS customer (
-id INT,
+id INT PRIMARY KEY,
 name VARCHAR(255),
 phone VARCHAR(10),
-total_price FLOAT,
-PRIMARY KEY (id)
+total_price FLOAT
 )
 ''')
 
@@ -38,7 +38,7 @@ face_wash_price FLOAT,
 body_lotion_price FLOAT,                 
 hair_gel_price FLOAT,
 hair_spray_price FLOAT,
-foreign key (id) references customer(id)
+FOREIGN KEY (id) REFERENCES customer(id)
 )
 ''')
 
@@ -57,7 +57,7 @@ salt_price FLOAT,
 rice_price FLOAT,                 
 tea_price FLOAT,
 oil_price FLOAT,
-foreign key(id) references customer(id)
+FOREIGN KEY(id) REFERENCES customer(id)
 )
 ''')
 
@@ -76,7 +76,7 @@ cocacola_price FLOAT,
 frooti_price FLOAT,                 
 dew_price FLOAT,
 pepsi_price FLOAT,
-foreign key(id) references customer(id)
+FOREIGN KEY(id) REFERENCES customer(id)
 )
 ''')
 
@@ -86,7 +86,7 @@ id INT PRIMARY KEY,
 cosmetic_price FLOAT,
 grocery_price FLOAT,
 cold_drinks_price FLOAT,
-foreign key(id) references customer(id)
+FOREIGN KEY(id) REFERENCES customer(id)
 )
 ''')
 
@@ -96,27 +96,49 @@ id INT PRIMARY KEY,
 cosmetic_tax FLOAT,
 grocery_tax FLOAT,
 cold_drinks_tax FLOAT,
-foreign key(id) references customer(id)
+FOREIGN KEY(id) REFERENCES customer(id)
 )
 ''')
+
 mycursor.execute('''
 CREATE TABLE IF NOT EXISTS items_price (
-items varchar(255),
+items VARCHAR(255) PRIMARY KEY,
 price FLOAT
 )
 ''')
+
+mycursor.execute('''
+CREATE TABLE IF NOT EXISTS admin (
+username VARCHAR(255) PRIMARY KEY,
+password VARCHAR(255)
+)
+''')
+
+mycursor.execute('''
+CREATE TABLE IF NOT EXISTS RetailBillingSystem (
+customer_id INT,
+Admin_id VARCHAR(255),
+items VARCHAR(255),
+PRIMARY KEY(customer_id, Admin_id, items),
+FOREIGN KEY (customer_id) REFERENCES customer(id),
+FOREIGN KEY (Admin_id) REFERENCES admin(Admin_id),
+FOREIGN KEY (items) REFERENCES items_price(items)
+)
+''')
+
+
 
 mycursor.execute("SELECT * FROM items_price")
 result = mycursor.fetchall()
 
 if not result:
-    mycursor.execute("INSERT INTO items_price (items, price) VALUES ('mazaprice', 50), ('pepsiprice', 50), ('spriteprice', 70), ('dewprice', 50), ('frootiprice', 70), ('cocacolaprice', 60)")
+    mycursor.execute("INSERT INTO items_price (items, price) VALUES ('maza', 50), ('pepsi', 50), ('sprite', 70), ('dew', 50), ('frooti', 70), ('cocacola', 60)")
     mydb.commit()
 
-    mycursor.execute("INSERT INTO items_price (items, price) VALUES ('wheatprice', 50), ('sugarprice', 70), ('saltprice', 30), ('oilprice', 200), ('teaprice', 100), ('riceprice', 60)")
+    mycursor.execute("INSERT INTO items_price (items, price) VALUES ('wheat', 50), ('sugar', 70), ('salt', 30), ('oil', 200), ('tea', 100), ('rice', 60)")
     mydb.commit()
 
-    mycursor.execute("INSERT INTO items_price (items, price) VALUES ('soapprice', 50), ('facecreamprice', 150), ('facewashprice', 150), ('hairsprayprice', 200), ('bodylotionprice', 170), ('hairgelprice', 160)")
+    mycursor.execute("INSERT INTO items_price (items, price) VALUES ('soap', 50), ('facecream', 150), ('facewash', 150), ('hairspray', 200), ('bodylotion', 170), ('hairgel', 160)")
     mydb.commit()
 
 
@@ -446,11 +468,8 @@ def total():
 #GUI Part
 root = Tk()
 root.title("Retail Billing System")
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
+root.attributes('-fullscreen', True)  # Set fullscreen mode
 
-# Set the initial window size to cover the entire screen
-root.geometry(f"{screen_width}x{screen_height}")
 root.iconbitmap('icon.ico')
 
 heading_label = Label(root, text="Retail Billing System", font=("Times New Roman", 35, "bold"), fg="gold", bg="gray20",bd=12,relief=GROOVE)
@@ -625,61 +644,80 @@ scrollbar.config(command=bill_text_area.yview)
 
 ###########
 
+
 bill_menu_frame = LabelFrame(root, text="Bill Menu", font=("Times New Roman", 15, "bold"), fg="gold", bg="gray20", bd=8, relief=GROOVE)
 bill_menu_frame.pack(fill=X)
 
 cosmetic_price_label = Label(bill_menu_frame, text="Cosmetic Price", font=("Times New Roman", 14, "bold"), fg="gold", bg="gray20")
-cosmetic_price_label.grid(row=0, column=0, padx=10, pady=6)
+cosmetic_price_label.grid(row=0, column=0, padx=100, pady=6)
 cosmetic_price_entry = Entry(bill_menu_frame, font=("Arial", 12), bg="white", bd=3)
 cosmetic_price_entry.grid(row=0, column=1)
 
 grocery_price_label = Label(bill_menu_frame, text="Grocery Price", font=("Times New Roman", 14, "bold"), fg="gold", bg="gray20")
-grocery_price_label.grid(row=1, column=0, padx=10, pady=6)
+grocery_price_label.grid(row=1, column=0, padx=100, pady=6)
 grocery_price_entry = Entry(bill_menu_frame, font=("Arial", 12), bg="white", bd=3)
 grocery_price_entry.grid(row=1, column=1)
 
 cold_drinks_price_label = Label(bill_menu_frame, text="Cold Drinks Price", font=("Times New Roman", 14, "bold"), fg="gold", bg="gray20")
-cold_drinks_price_label.grid(row=2, column=0, padx=10, pady=6)
+cold_drinks_price_label.grid(row=2, column=0, padx=100, pady=6)
 cold_drinks_price_entry = Entry(bill_menu_frame, font=("Arial", 12), bg="white", bd=3)
 cold_drinks_price_entry.grid(row=2, column=1)
 
 
 cosmetic_tax_label = Label(bill_menu_frame, text="Cosmetic Tax", font=("Times New Roman", 14, "bold"), fg="gold", bg="gray20")
-cosmetic_tax_label.grid(row=0, column=2, padx=50, pady=6)
+cosmetic_tax_label.grid(row=0, column=2, padx=100, pady=6)
 cosmetic_tax_entry = Entry(bill_menu_frame, font=("Arial", 12), bg="white", bd=3)
 cosmetic_tax_entry.grid(row=0, column=3)
 
 grocery_tax_label = Label(bill_menu_frame, text="Grocery Tax", font=("Times New Roman", 14, "bold"), fg="gold", bg="gray20")
-grocery_tax_label.grid(row=1, column=2, padx=50, pady=6)
+grocery_tax_label.grid(row=1, column=2, padx=100, pady=6)
 grocery_tax_entry = Entry(bill_menu_frame, font=("Arial", 12), bg="white", bd=3)
 grocery_tax_entry.grid(row=1, column=3)
 
 cold_drinks_tax_label = Label(bill_menu_frame, text="Cold Drinks Tax", font=("Times New Roman", 14, "bold"), fg="gold", bg="gray20")
-cold_drinks_tax_label.grid(row=2, column=2, padx=50, pady=6)
+cold_drinks_tax_label.grid(row=2, column=2, padx=100, pady=6)
 cold_drinks_tax_entry = Entry(bill_menu_frame, font=("Arial", 12), bg="white", bd=3)
 cold_drinks_tax_entry.grid(row=2, column=3)
 
-button_frame=Frame(bill_menu_frame,bd=8,relief=GROOVE)
-button_frame.grid(row=0,column=4,rowspan=3,padx=160)
+def exit_application():
+    root.destroy()
 
-total_button=Button(button_frame,text='Total',font=('arial',14,'bold'),bg='gray20',fg='white',bd=5,width=6,pady=10,command=total)
-total_button.grid(row=0,column=0,pady=15,padx=5)
+def open_admin_section():
+    # Replace 'admin_section.py' with the path to your admin script
+    subprocess.Popen(['python', 'admin.py'])
+    root.destroy() 
 
-bill_button=Button(button_frame,text='Bill',font=('arial',14,'bold'),bg='gray20',fg='white',bd=5,width=6,pady=10,command=bill_area)
-bill_button.grid(row=0,column=1,pady=15,padx=5)
+# Buttons for "Exit" and "Admin"
+button_frame = Frame(root)
+button_frame.pack(fill=X)
 
-email_button=Button(button_frame,text='Email',font=('arial',14,'bold'),bg='gray20',fg='white',bd=5,width=6,pady=10,command=send_bill)
-email_button.grid(row=0,column=2,pady=15,padx=5)
+# Rest of the buttons
+button_frame_rest = LabelFrame(button_frame,bd=0)
+button_frame_rest.grid(row=0, column=0, padx=250, pady=30)
 
-print_button=Button(button_frame,text='Print',font=('arial',14,'bold'),bg='gray20',fg='white',bd=5,width=6,pady=10,command=print_bill)
-print_button.grid(row=0,column=3,pady=15,padx=5)
+total_button = Button(button_frame_rest, text='Total', font=('arial', 14, 'bold'), bg='gray20', fg='white', bd=5, width=6, pady=10, command=total)
+total_button.grid(row=0, column=0, padx=10,pady=5)
 
-clear_button=Button(button_frame,text='Clear',font=('arial',14,'bold'),bg='gray20',fg='white',bd=5,width=6,pady=10,command=clear)
-clear_button.grid(row=0,column=4,pady=15,padx=5)
+bill_button = Button(button_frame_rest, text='Bill', font=('arial', 14, 'bold'), bg='gray20', fg='white', bd=5, width=6, pady=10, command=bill_area)
+bill_button.grid(row=0, column=1, padx=10,pady=5)
 
-thank_frame = LabelFrame(root, fg="gold", bg="gray20", bd=8, relief=GROOVE)
-thank_frame.pack(fill=X)
+email_button = Button(button_frame_rest, text='Email', font=('arial', 14, 'bold'), bg='gray20', fg='white', bd=5, width=6, pady=10, command=send_bill)
+email_button.grid(row=0, column=2, padx=10,pady=5)
 
-thank_label = Label(thank_frame, text="Thank You, Visit Again", font=("Times New Roman", 25, "bold"), fg="gold", bg="gray20")
-thank_label.grid(padx=500, pady=20)
+print_button = Button(button_frame_rest, text='Print', font=('arial', 14, 'bold'), bg='gray20', fg='white', bd=5, width=6, pady=10, command=print_bill)
+print_button.grid(row=0, column=3, padx=10,pady=5)
+
+clear_button = Button(button_frame_rest, text='Clear', font=('arial', 14, 'bold'), bg='gray20', fg='white', bd=5, width=6, pady=10, command=clear)
+clear_button.grid(row=0, column=4, padx=10,pady=5)
+
+# Buttons for "Exit" and "Admin"
+button_frame_exit_admin = LabelFrame(button_frame,bd=0)
+button_frame_exit_admin.grid(row=0, column=1, padx=10, pady=30)
+
+exit_button = Button(button_frame_exit_admin, text="Exit", font=('arial', 14, 'bold'), bg='gray20', fg='white', bd=5, width=6, pady=10, command=exit_application)
+exit_button.grid(row=0, column=0, padx=10,pady=5)
+
+admin_button = Button(button_frame_exit_admin, text="Admin", font=('arial', 14, 'bold'), bg='gray20', fg='white', bd=5, width=6, pady=10, command=open_admin_section)
+admin_button.grid(row=0, column=1, padx=10,pady=5)
+
 root.mainloop()
